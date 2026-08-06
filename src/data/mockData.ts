@@ -1,15 +1,47 @@
 import { JobApplication, Company, DocumentFile, ReminderNotification, UserProfile } from '../types';
 
-export const INITIAL_USER: UserProfile = {
-  id: 'usr_eko_01',
-  name: 'Eko Damar Yogi',
-  email: 'ekodamaryogi1@gmail.com',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-  target_role: 'Senior Data Analyst / Data Scientist',
-  created_at: '2026-01-01T08:00:00.000Z',
-};
+export interface UserAccount extends UserProfile {
+  password?: string;
+  isDemo?: boolean;
+}
 
-export const INITIAL_COMPANIES: Company[] = [
+export const DEMO_USERS: UserAccount[] = [
+  {
+    id: 'usr_eko_01',
+    name: 'Eko Damar Yogi',
+    email: 'ekodamaryogi1@gmail.com',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    target_role: 'Senior Data Analyst / Data Scientist',
+    created_at: '2026-01-01T08:00:00.000Z',
+    isDemo: true,
+  },
+  {
+    id: 'usr_sarah_02',
+    name: 'Sarah Jenkins',
+    email: 'sarah.j@techmail.io',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
+    target_role: 'Lead Full-Stack Software Engineer',
+    created_at: '2026-02-10T08:00:00.000Z',
+    isDemo: true,
+  },
+  {
+    id: 'usr_rizky_03',
+    name: 'Rizky Ramadhan',
+    email: 'rizky.ramadhan@indotech.id',
+    password: 'password123',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    target_role: 'Lead UI/UX & Product Designer',
+    created_at: '2026-03-15T08:00:00.000Z',
+    isDemo: true,
+  },
+];
+
+export const INITIAL_USER: UserProfile = DEMO_USERS[0];
+
+// --- EKO'S DATA ---
+export const EKO_COMPANIES: Company[] = [
   {
     id: 'comp_google',
     user_id: 'usr_eko_01',
@@ -72,7 +104,7 @@ export const INITIAL_COMPANIES: Company[] = [
   },
 ];
 
-export const INITIAL_APPLICATIONS: JobApplication[] = [
+export const EKO_APPLICATIONS: JobApplication[] = [
   {
     id: 'app_google_01',
     user_id: 'usr_eko_01',
@@ -258,96 +290,9 @@ export const INITIAL_APPLICATIONS: JobApplication[] = [
       },
     ],
   },
-  {
-    id: 'app_traveloka_01',
-    user_id: 'usr_eko_01',
-    company_id: 'comp_traveloka',
-    company_name: 'Traveloka',
-    company_logo: 'https://www.traveloka.com/favicon.ico',
-    position: 'Data Engineering Lead',
-    location: 'BSD City, Tangerang',
-    job_type: 'Full-time',
-    work_arrangement: 'Hybrid',
-    salary: 'IDR 40,000,000 / month',
-    application_source: 'Referral',
-    application_url: 'https://www.traveloka.com/en-id/careers',
-    applied_date: '2026-07-20',
-    deadline: '2026-08-01',
-    status: 'Assessment',
-    recruiter_name: 'Rian Pratama',
-    recruiter_email: 'rian.pratama@traveloka.com',
-    notes: 'Submitted Apache Spark & Airflow pipeline design assessment.',
-    next_step: 'Assessment Grading',
-    next_step_date: '2026-08-07T11:00:00',
-    created_at: '2026-07-20T10:00:00.000Z',
-    updated_at: '2026-07-29T16:00:00.000Z',
-    events: [
-      {
-        id: 'ev_tr_1',
-        application_id: 'app_traveloka_01',
-        event_type: 'Submitted',
-        title: 'Referred by Staff Engineer',
-        description: 'Internal referral submitted by former colleague.',
-        event_date: '2026-07-20T10:00:00.000Z',
-        completed: true,
-      },
-      {
-        id: 'ev_tr_2',
-        application_id: 'app_traveloka_01',
-        event_type: 'Assessment',
-        title: 'System Design Challenge',
-        description: 'Architecture diagram for real-time streaming analytics.',
-        event_date: '2026-07-28T10:00:00.000Z',
-        completed: true,
-      },
-    ],
-  },
-  {
-    id: 'app_goto_01',
-    user_id: 'usr_eko_01',
-    company_id: 'comp_goto',
-    company_name: 'GoTo Group',
-    company_logo: 'https://www.gotocompany.com/favicon.ico',
-    position: 'Product Analytics Lead',
-    location: 'Jakarta, Indonesia',
-    job_type: 'Full-time',
-    work_arrangement: 'Hybrid',
-    salary: 'IDR 38,000,000 / month',
-    application_source: 'JobStreet',
-    application_url: 'https://www.jobstreet.co.id/job/goto-product-analytics',
-    applied_date: '2026-07-15',
-    deadline: '2026-07-30',
-    status: 'Rejected',
-    recruiter_name: 'Dewi Lestari',
-    recruiter_email: 'dewi.l@goto.com',
-    notes: 'Position closed due to internal restructuring.',
-    next_step: 'Closed',
-    created_at: '2026-07-15T09:00:00.000Z',
-    updated_at: '2026-07-30T10:00:00.000Z',
-    events: [
-      {
-        id: 'ev_gt_1',
-        application_id: 'app_goto_01',
-        event_type: 'Submitted',
-        title: 'Application Submitted',
-        description: 'Applied via JobStreet portal.',
-        event_date: '2026-07-15T09:00:00.000Z',
-        completed: true,
-      },
-      {
-        id: 'ev_gt_2',
-        application_id: 'app_goto_01',
-        event_type: 'Status Change',
-        title: 'Rejection Notification',
-        description: 'Thank you email received - position frozen.',
-        event_date: '2026-07-30T10:00:00.000Z',
-        completed: true,
-      },
-    ],
-  },
 ];
 
-export const INITIAL_DOCUMENTS: DocumentFile[] = [
+export const EKO_DOCUMENTS: DocumentFile[] = [
   {
     id: 'doc_1',
     user_id: 'usr_eko_01',
@@ -356,7 +301,7 @@ export const INITIAL_DOCUMENTS: DocumentFile[] = [
     file_name: 'Eko_Damar_Yogi_CV_DataAnalyst_2026.pdf',
     file_type: 'CV',
     file_mime: 'application/pdf',
-    file_size: 1420000, // 1.42 MB
+    file_size: 1420000,
     created_at: '2026-08-01T10:05:00.000Z',
     file_content: 'CV Content: Eko Damar Yogi - Senior Data Analyst with 5+ years experience in BigQuery, Python, Tableau, and Machine Learning.',
   },
@@ -372,33 +317,9 @@ export const INITIAL_DOCUMENTS: DocumentFile[] = [
     created_at: '2026-08-01T10:10:00.000Z',
     file_content: 'Dear Google Hiring Team, I am writing to express my enthusiasm for the Data Analyst role in Jakarta...',
   },
-  {
-    id: 'doc_3',
-    user_id: 'usr_eko_01',
-    application_id: 'app_bps_01',
-    company_name: 'BPS - Badan Pusat Statistik',
-    file_name: 'Ijazah_Sertifikat_Statistik_Eko.pdf',
-    file_type: 'Certificate',
-    file_mime: 'application/pdf',
-    file_size: 2800000,
-    created_at: '2026-08-04T08:15:00.000Z',
-    file_content: 'Official Certificate in Data Science & Statistical Research Methodology.',
-  },
-  {
-    id: 'doc_4',
-    user_id: 'usr_eko_01',
-    application_id: 'app_shopee_01',
-    company_name: 'Shopee',
-    file_name: 'Eko_Portfolio_Data_Visualization.pdf',
-    file_type: 'Portfolio',
-    file_mime: 'application/pdf',
-    file_size: 4500000,
-    created_at: '2026-07-22T09:15:00.000Z',
-    file_content: 'Interactive Dashboards, SQL Optimization Case Studies, and E-Commerce Funnel Analysis.',
-  },
 ];
 
-export const INITIAL_NOTIFICATIONS: ReminderNotification[] = [
+export const EKO_NOTIFICATIONS: ReminderNotification[] = [
   {
     id: 'notif_1',
     user_id: 'usr_eko_01',
@@ -423,16 +344,277 @@ export const INITIAL_NOTIFICATIONS: ReminderNotification[] = [
     completed: false,
     created_at: '2026-08-05T09:35:00.000Z',
   },
+];
+
+// --- SARAH'S DATA ---
+export const SARAH_COMPANIES: Company[] = [
   {
-    id: 'notif_3',
-    user_id: 'usr_eko_01',
-    application_id: 'app_bps_01',
-    title: 'BPS Administrative Status Check',
-    description: 'Follow up on BPS Data Analyst screening results on Aug 8.',
-    type: 'followup',
-    reminder_date: '2026-08-08T09:00:00',
-    read: true,
-    completed: false,
-    created_at: '2026-08-04T08:30:00.000Z',
+    id: 'comp_msft',
+    user_id: 'usr_sarah_02',
+    name: 'Microsoft',
+    logo_url: 'https://www.microsoft.com/favicon.ico',
+    industry: 'Cloud Infrastructure & Software',
+    location: 'Singapore / Hybrid',
+    website: 'https://careers.microsoft.com',
+    created_at: '2026-07-01T10:00:00.000Z',
+  },
+  {
+    id: 'comp_stripe',
+    user_id: 'usr_sarah_02',
+    name: 'Stripe',
+    logo_url: 'https://stripe.com/favicon.ico',
+    industry: 'Financial Technology',
+    location: 'Remote',
+    website: 'https://stripe.com/jobs',
+    created_at: '2026-07-05T10:00:00.000Z',
+  },
+  {
+    id: 'comp_tokopedia',
+    user_id: 'usr_sarah_02',
+    name: 'Tokopedia',
+    logo_url: 'https://www.tokopedia.com/favicon.ico',
+    industry: 'E-Commerce Platform',
+    location: 'Jakarta, Indonesia',
+    website: 'https://www.tokopedia.com/careers',
+    created_at: '2026-07-12T10:00:00.000Z',
   },
 ];
+
+export const SARAH_APPLICATIONS: JobApplication[] = [
+  {
+    id: 'app_msft_01',
+    user_id: 'usr_sarah_02',
+    company_id: 'comp_msft',
+    company_name: 'Microsoft',
+    company_logo: 'https://www.microsoft.com/favicon.ico',
+    position: 'Senior Backend Engineer - Azure Cloud',
+    location: 'Singapore (Hybrid)',
+    job_type: 'Full-time',
+    work_arrangement: 'Hybrid',
+    salary: 'USD $8,500 / month',
+    application_source: 'LinkedIn',
+    application_url: 'https://careers.microsoft.com/job/123456',
+    applied_date: '2026-07-25',
+    deadline: '2026-08-12',
+    status: 'Interview',
+    recruiter_name: 'David Miller',
+    recruiter_email: 'dmiller@microsoft.com',
+    notes: 'System architecture interview completed with Principal Architect. Waiting for VP round.',
+    next_step: 'Final Executive Panel Interview',
+    next_step_date: '2026-08-08T14:00:00',
+    created_at: '2026-07-25T10:00:00.000Z',
+    updated_at: '2026-08-04T11:00:00.000Z',
+    events: [
+      {
+        id: 'ev_ms_1',
+        application_id: 'app_msft_01',
+        event_type: 'Submitted',
+        title: 'Application Submitted',
+        description: 'Applied through Microsoft Careers portal.',
+        event_date: '2026-07-25T10:00:00.000Z',
+        completed: true,
+      },
+      {
+        id: 'ev_ms_2',
+        application_id: 'app_msft_01',
+        event_type: 'Interview',
+        title: 'System Design Interview',
+        description: 'Designed distributed queueing system in Azure Kubernetes Service.',
+        event_date: '2026-08-02T14:00:00.000Z',
+        completed: true,
+      },
+    ],
+  },
+  {
+    id: 'app_tokopedia_01',
+    user_id: 'usr_sarah_02',
+    company_id: 'comp_tokopedia',
+    company_name: 'Tokopedia',
+    company_logo: 'https://www.tokopedia.com/favicon.ico',
+    position: 'Principal React / Node Architect',
+    location: 'Jakarta, Indonesia',
+    job_type: 'Full-time',
+    work_arrangement: 'Hybrid',
+    salary: 'IDR 45,000,000 / month',
+    application_source: 'Company Website',
+    application_url: 'https://www.tokopedia.com/careers/arch',
+    applied_date: '2026-07-15',
+    deadline: '2026-07-30',
+    status: 'Offer',
+    recruiter_name: 'Linda Kusuma',
+    recruiter_email: 'linda.k@tokopedia.com',
+    notes: 'Received official offer package with sign-on bonus.',
+    next_step: 'Contract Signing',
+    next_step_date: '2026-08-11T16:00:00',
+    created_at: '2026-07-15T09:00:00.000Z',
+    updated_at: '2026-08-03T15:00:00.000Z',
+    events: [
+      {
+        id: 'ev_tok_1',
+        application_id: 'app_tokopedia_01',
+        event_type: 'Offer',
+        title: 'Principal Engineer Offer Extended',
+        description: 'Offer letter generated and sent via email.',
+        event_date: '2026-08-03T15:00:00.000Z',
+        completed: true,
+      },
+    ],
+  },
+];
+
+export const SARAH_DOCUMENTS: DocumentFile[] = [
+  {
+    id: 'doc_sarah_1',
+    user_id: 'usr_sarah_02',
+    application_id: 'app_msft_01',
+    company_name: 'Microsoft',
+    file_name: 'Sarah_Jenkins_FullStack_Resume_2026.pdf',
+    file_type: 'CV',
+    file_mime: 'application/pdf',
+    file_size: 1850000,
+    created_at: '2026-07-25T10:05:00.000Z',
+    file_content: 'Sarah Jenkins - Senior Full Stack Engineer (React, TypeScript, Go, Azure, PostgreSQL). 7+ years experience.',
+  },
+];
+
+export const SARAH_NOTIFICATIONS: ReminderNotification[] = [
+  {
+    id: 'notif_s_1',
+    user_id: 'usr_sarah_02',
+    application_id: 'app_msft_01',
+    title: 'Microsoft VP Panel Interview',
+    description: 'Executive panel interview for Azure Cloud team scheduled on Aug 8 at 2:00 PM.',
+    type: 'interview',
+    reminder_date: '2026-08-08T14:00:00',
+    read: false,
+    completed: false,
+    created_at: '2026-08-04T11:00:00.000Z',
+  },
+];
+
+// --- RIZKY'S DATA ---
+export const RIZKY_COMPANIES: Company[] = [
+  {
+    id: 'comp_gojek',
+    user_id: 'usr_rizky_03',
+    name: 'Gojek',
+    logo_url: 'https://www.gojek.com/favicon.ico',
+    industry: 'On-Demand Mobility & Logistics',
+    location: 'Jakarta, Indonesia',
+    website: 'https://www.gojek.io/careers',
+    created_at: '2026-07-10T10:00:00.000Z',
+  },
+  {
+    id: 'comp_tiket',
+    user_id: 'usr_rizky_03',
+    name: 'Tiket.com',
+    logo_url: 'https://www.tiket.com/favicon.ico',
+    industry: 'Online Travel Agency',
+    location: 'Jakarta / Hybrid',
+    website: 'https://careers.tiket.com',
+    created_at: '2026-07-14T10:00:00.000Z',
+  },
+];
+
+export const RIZKY_APPLICATIONS: JobApplication[] = [
+  {
+    id: 'app_gojek_01',
+    user_id: 'usr_rizky_03',
+    company_id: 'comp_gojek',
+    company_name: 'Gojek',
+    company_logo: 'https://www.gojek.com/favicon.ico',
+    position: 'Staff UX Researcher & Design Lead',
+    location: 'Jakarta, Indonesia',
+    job_type: 'Full-time',
+    work_arrangement: 'Hybrid',
+    salary: 'IDR 32,000,000 / month',
+    application_source: 'LinkedIn',
+    application_url: 'https://www.gojek.io/careers/ux-lead',
+    applied_date: '2026-07-28',
+    deadline: '2026-08-15',
+    status: 'Interview',
+    recruiter_name: 'Farhan Maulana',
+    recruiter_email: 'farhan.m@gojek.com',
+    notes: 'Design portfolio presentation to Head of Product Design scheduled.',
+    next_step: 'Design Critique Session',
+    next_step_date: '2026-08-07T13:00:00',
+    created_at: '2026-07-28T10:00:00.000Z',
+    updated_at: '2026-08-04T16:00:00.000Z',
+    events: [
+      {
+        id: 'ev_gj_1',
+        application_id: 'app_gojek_01',
+        event_type: 'Submitted',
+        title: 'Portfolio Submitted',
+        description: 'Submitted Figma design systems and user research case studies.',
+        event_date: '2026-07-28T10:00:00.000Z',
+        completed: true,
+      },
+    ],
+  },
+];
+
+export const RIZKY_DOCUMENTS: DocumentFile[] = [
+  {
+    id: 'doc_rizky_1',
+    user_id: 'usr_rizky_03',
+    application_id: 'app_gojek_01',
+    company_name: 'Gojek',
+    file_name: 'Rizky_Ramadhan_UX_Portfolio_2026.pdf',
+    file_type: 'Portfolio',
+    file_mime: 'application/pdf',
+    file_size: 6200000,
+    created_at: '2026-07-28T10:05:00.000Z',
+    file_content: 'Rizky Ramadhan - UI/UX Product Design Leader. Figma Design Systems, Micro-interactions, Design Thinking methodology.',
+  },
+];
+
+export const RIZKY_NOTIFICATIONS: ReminderNotification[] = [
+  {
+    id: 'notif_r_1',
+    user_id: 'usr_rizky_03',
+    application_id: 'app_gojek_01',
+    title: 'Gojek Design Critique Interview',
+    description: 'Live portfolio critique with Head of Product Design at 1:00 PM.',
+    type: 'interview',
+    reminder_date: '2026-08-07T13:00:00',
+    read: false,
+    completed: false,
+    created_at: '2026-08-04T16:00:00.000Z',
+  },
+];
+
+// Master lookup per user ID
+export const DEFAULT_USER_DATA: Record<
+  string,
+  {
+    applications: JobApplication[];
+    companies: Company[];
+    documents: DocumentFile[];
+    notifications: ReminderNotification[];
+  }
+> = {
+  usr_eko_01: {
+    applications: EKO_APPLICATIONS,
+    companies: EKO_COMPANIES,
+    documents: EKO_DOCUMENTS,
+    notifications: EKO_NOTIFICATIONS,
+  },
+  usr_sarah_02: {
+    applications: SARAH_APPLICATIONS,
+    companies: SARAH_COMPANIES,
+    documents: SARAH_DOCUMENTS,
+    notifications: SARAH_NOTIFICATIONS,
+  },
+  usr_rizky_03: {
+    applications: RIZKY_APPLICATIONS,
+    companies: RIZKY_COMPANIES,
+    documents: RIZKY_DOCUMENTS,
+    notifications: RIZKY_NOTIFICATIONS,
+  },
+};
+
+export const INITIAL_APPLICATIONS: JobApplication[] = EKO_APPLICATIONS;
+export const INITIAL_COMPANIES: Company[] = EKO_COMPANIES;
+export const INITIAL_DOCUMENTS: DocumentFile[] = EKO_DOCUMENTS;
+export const INITIAL_NOTIFICATIONS: ReminderNotification[] = EKO_NOTIFICATIONS;

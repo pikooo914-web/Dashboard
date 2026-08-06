@@ -11,6 +11,7 @@ import { CompaniesView } from './components/CompaniesView';
 import { DocumentsView } from './components/DocumentsView';
 import { AnalyticsView } from './components/AnalyticsView';
 import { SettingsView } from './components/SettingsView';
+import { AuthModal } from './components/AuthModal';
 import {
   JobApplication,
   Company,
@@ -21,20 +22,22 @@ import {
   DocumentCategory,
 } from './types';
 import {
-  getStoredApplications,
-  saveStoredApplications,
-  getStoredCompanies,
-  saveStoredCompanies,
-  getStoredDocuments,
-  saveStoredDocuments,
-  getStoredNotifications,
-  saveStoredNotifications,
-  getStoredUser,
+  getCurrentSessionUser,
+  getUserApplications,
+  saveUserApplications,
+  getUserCompanies,
+  saveUserCompanies,
+  getUserDocuments,
+  saveUserDocuments,
+  getUserNotifications,
+  saveUserNotifications,
   saveStoredUser,
   getStoredTheme,
   saveStoredTheme,
   resetAllData,
+  logoutUser,
 } from './lib/storage';
+import { UserAccount } from './data/mockData';
 
 export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(getStoredTheme());
@@ -42,13 +45,24 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedFilterStatus, setSelectedFilterStatus] = useState<string>('All');
 
-  // Application Data States
-  const [user, setUser] = useState<UserProfile>(getStoredUser());
-  const [applications, setApplications] = useState<JobApplication[]>(getStoredApplications());
-  const [companies, setCompanies] = useState<Company[]>(getStoredCompanies());
-  const [documents, setDocuments] = useState<DocumentFile[]>(getStoredDocuments());
+  // Application Data States (Isolated per active User)
+  const initialUser = getCurrentSessionUser() || {
+    id: 'usr_guest',
+    name: 'Guest User',
+    email: 'guest@cybertrack.io',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200',
+    target_role: 'Software Specialist',
+    created_at: new Date().toISOString(),
+  };
+
+  const [user, setUser] = useState<UserProfile>(initialUser);
+  const [applications, setApplications] = useState<JobApplication[]>(
+    getUserApplications(initialUser.id)
+  );
+  const [companies, setCompanies] = useState<Company[]>(getUserCompanies(initialUser.id));
+  const [documents, setDocuments] = useState<DocumentFile[]>(getUserDocuments(initialUser.id));
   const [notifications, setNotifications] = useState<ReminderNotification[]>(
-    getStoredNotifications()
+    getUserNotifications(initialUser.id)
   );
 
   // Modals & Drawers
@@ -56,6 +70,17 @@ export default function App() {
   const [editingApplication, setEditingApplication] = useState<JobApplication | null>(null);
   const [selectedDetailApp, setSelectedDetailApp] = useState<JobApplication | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
+  // Load User Specific Data
+  const handleSwitchUserData = (activeUser: UserAccount) => {
+    setUser(activeUser);
+    setApplications(getUserApplications(activeUser.id));
+    setCompanies(getUserCompanies(activeUser.id));
+    setDocuments(getUserDocuments(activeUser.id));
+    setNotifications(getUserNotifications(activeUser.id));
+    setSelectedDetailApp(null);
+  };
 
   // Synchronize dark class to html document
   useEffect(() => {
@@ -166,12 +191,12 @@ export default function App() {
         };
         const updatedComp = [newCompany, ...companies];
         setCompanies(updatedComp);
-        saveStoredCompanies(updatedComp);
+        saveUserCompanies(user.id, updatedComp);
       }
     }
 
     setApplications(updatedApps);
-    saveStoredApplications(updatedApps);
+    saveUserApplications(user.id, updatedApps);
 
     // Process file uploads
     if (newFiles && newFiles.length > 0) {
@@ -189,7 +214,7 @@ export default function App() {
       }));
       const updatedDocs = [...newDocs, ...documents];
       setDocuments(updatedDocs);
-      saveStoredDocuments(updatedDocs);
+      saveUserDocuments(user.id, updatedDocs);
     }
 
     setEditingApplication(null);
@@ -221,7 +246,7 @@ export default function App() {
     });
 
     setApplications(updated);
-    saveStoredApplications(updated);
+    saveUserApplications(user.id, updated);
 
     if (selectedDetailApp && selectedDetailApp.id === appId) {
       setSelectedDetailApp(updated.find((a) => a.id === appId) || null);
@@ -232,7 +257,7 @@ export default function App() {
   const handleDeleteApplication = (appId: string) => {
     const updated = applications.filter((app) => app.id !== appId);
     setApplications(updated);
-    saveStoredApplications(updated);
+    saveUserApplications(user.id, updated);
     if (selectedDetailApp?.id === appId) setSelectedDetailApp(null);
   };
 
@@ -263,7 +288,7 @@ export default function App() {
       return app;
     });
     setApplications(updated);
-    saveStoredApplications(updated);
+    saveUserApplications(user.id, updated);
     if (selectedDetailApp?.id === appId) {
       setSelectedDetailApp(updated.find((a) => a.id === appId) || null);
     }
@@ -276,7 +301,7 @@ export default function App() {
       return app;
     });
     setApplications(updated);
-    saveStoredApplications(updated);
+    saveUserApplications(user.id, updated);
     if (selectedDetailApp?.id === appId) {
       setSelectedDetailApp(updated.find((a) => a.id === appId) || null);
     }
@@ -303,23 +328,20 @@ export default function App() {
     };
     const updated = [newDoc, ...documents];
     setDocuments(updated);
-    saveStoredDocuments(updated);
+    saveUserDocuments(user.id, updated);
   };
 
   const handleDeleteDocument = (docId: string) => {
     const updated = documents.filter((d) => d.id !== docId);
     setDocuments(updated);
-    saveStoredDocuments(updated);
+    saveUserDocuments(user.id, updated);
   };
 
   // Reset and JSON backup
   const handleResetData = () => {
     resetAllData();
-    setApplications(getStoredApplications());
-    setCompanies(getStoredCompanies());
-    setDocuments(getStoredDocuments());
-    setNotifications(getStoredNotifications());
-    setUser(getStoredUser());
+    const active = getCurrentSessionUser() || initialUser;
+    handleSwitchUserData(active);
   };
 
   const handleExportData = () => {
@@ -335,7 +357,9 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `CyberTrack_Backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `CyberTrack_${user.name.replace(/\s+/g, '_')}_Backup_${
+      new Date().toISOString().split('T')[0]
+    }.json`;
     a.click();
   };
 
@@ -344,15 +368,15 @@ export default function App() {
       const data = JSON.parse(jsonStr);
       if (data.applications) {
         setApplications(data.applications);
-        saveStoredApplications(data.applications);
+        saveUserApplications(user.id, data.applications);
       }
       if (data.companies) {
         setCompanies(data.companies);
-        saveStoredCompanies(data.companies);
+        saveUserCompanies(user.id, data.companies);
       }
       if (data.documents) {
         setDocuments(data.documents);
-        saveStoredDocuments(data.documents);
+        saveUserDocuments(user.id, data.documents);
       }
       if (data.user) {
         setUser(data.user);
@@ -377,7 +401,11 @@ export default function App() {
         theme={theme}
         toggleTheme={toggleTheme}
         user={user}
-        onLogout={handleResetData}
+        onLogout={() => {
+          logoutUser();
+          setIsAuthModalOpen(true);
+        }}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
         isMobileOpen={isMobileOpen}
         setIsMobileOpen={setIsMobileOpen}
       />
@@ -392,7 +420,7 @@ export default function App() {
           onMarkAllNotificationsRead={() => {
             const updated = notifications.map((n) => ({ ...n, read: true }));
             setNotifications(updated);
-            saveStoredNotifications(updated);
+            saveUserNotifications(user.id, updated);
           }}
           onSelectNotification={(notif) => {
             if (notif.application_id) {
@@ -410,6 +438,7 @@ export default function App() {
           selectedFilterStatus={selectedFilterStatus}
           setSelectedFilterStatus={setSelectedFilterStatus}
           onOpenMobileMenu={() => setIsMobileOpen(true)}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
         />
 
         {/* Dynamic View Pages */}
@@ -566,6 +595,15 @@ export default function App() {
             company_name: compName,
           });
         }}
+        theme={theme}
+      />
+
+      {/* Multi-User Authentication & Account Switcher Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={(activeUser) => handleSwitchUserData(activeUser)}
+        currentUserId={user.id}
         theme={theme}
       />
     </div>

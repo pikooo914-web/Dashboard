@@ -25,6 +25,7 @@ interface TopbarProps {
   selectedFilterStatus?: string;
   setSelectedFilterStatus?: (status: string) => void;
   onOpenMobileMenu?: () => void;
+  onOpenAuthModal?: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -40,6 +41,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   selectedFilterStatus,
   setSelectedFilterStatus,
   onOpenMobileMenu,
+  onOpenAuthModal,
 }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -60,10 +62,10 @@ export const Topbar: React.FC<TopbarProps> = ({
   return (
     <header
       id="topbar-container"
-      className={`sticky top-0 z-20 px-4 py-3.5 border-b transition-colors ${
+      className={`sticky top-0 z-40 px-4 py-3.5 border-b transition-colors ${
         theme === 'dark'
-          ? 'bg-slate-950/80 backdrop-blur-md border-cyan-500/15'
-          : 'bg-white/90 backdrop-blur-md border-slate-200'
+          ? 'bg-slate-950/95 backdrop-blur-xl border-cyan-500/20 shadow-[0_4px_20px_rgba(0,0,0,0.4)]'
+          : 'bg-white/95 backdrop-blur-xl border-slate-200 shadow-xs'
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2.5">
@@ -219,14 +221,21 @@ export const Topbar: React.FC<TopbarProps> = ({
             <span className="sm:hidden">Add</span>
           </button>
 
-          {/* User Avatar */}
-          <div className="hidden sm:flex items-center space-x-2 pl-1">
+          {/* User Avatar & Account Switch Trigger */}
+          <button
+            onClick={onOpenAuthModal}
+            className="flex items-center space-x-2 pl-1 p-1 rounded-full hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/30 transition-all group"
+            title={`Logged in as ${user.name}. Click to switch user account.`}
+          >
             <img
               src={user.avatar}
               alt={user.name}
-              className="w-8 h-8 rounded-full object-cover border border-cyan-400/50 shadow-[0_0_8px_rgba(0,240,255,0.3)]"
+              className="w-8 h-8 rounded-full object-cover border border-cyan-400/50 shadow-[0_0_8px_rgba(0,240,255,0.3)] group-hover:scale-105 transition-transform"
             />
-          </div>
+            <span className="hidden lg:inline text-xs font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors max-w-[110px] truncate">
+              {user.name}
+            </span>
+          </button>
         </div>
       </div>
     </header>
